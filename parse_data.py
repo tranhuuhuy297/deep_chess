@@ -1,5 +1,6 @@
-import numpy as np
 import chess.pgn
+import numpy as np
+from numpy import save
 
 def get_bitboard(board):
     '''
@@ -56,8 +57,7 @@ bitboards = []
 labels = []
 num_games = 0
 
-for i in range(845910):
-
+for i in range(1000):
     num_games += 1
     game = chess.pgn.read_game(games)
     result = get_result(game)
@@ -72,3 +72,5 @@ for i in range(845910):
 bitboards = np.array(bitboards)
 labels = np.array(labels)
 
+save('./data/bitboards.npy', bitboards)
+save('./data/labels.npy', labels)
