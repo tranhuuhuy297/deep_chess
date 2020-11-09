@@ -4,6 +4,7 @@ import argparse
 import numpy as np
 from torch import nn, optim
 import torch.utils.data as data
+from torch.utils.data import Dataset
 from torch.nn import functional as F
 from tensorboardX import SummaryWriter
 from utils import loss_AE
@@ -43,7 +44,7 @@ class TrainSet(Dataset):
         pass
 
     def __getitem__(self, index):
-        return torch.from_numpy(train_games[index]).type(torch.FloatTensor)
+        return torch.from_numpy(train_games[index]).type(torch.FloatTensor), 0
 
     def __len__(self):
         return train_games.shape[0]
@@ -54,13 +55,13 @@ class TestSet(Dataset):
         pass
 
     def __getitem__(self, index):
-        return torch.from_numpy(test_games[index]).type(torch.FloatTensor)
+        return torch.from_numpy(test_games[index]).type(torch.FloatTensor), 0
 
     def __len__(self):
         return test_games.shape[0]
 
-train = data.DataLoader(TrainSet(), batch_size=args.batch, shuffle=True)
-test  = data.DataLoader(TestSet(), batch_size=args.batch, shuffle=True)
+train_loader = data.DataLoader(TrainSet(), batch_size=args.batch, shuffle=True)
+test_loader  = data.DataLoader(TestSet(), batch_size=args.batch, shuffle=True)
 
 model = AE().to(device)
 optimizer = optim.Adam(model.parameters(), lr=args.lr)
@@ -69,7 +70,7 @@ optimizer = optim.Adam(model.parameters(), lr=args.lr)
 def train(epoch):
     model.train()
     train_loss = 0.
-    for batch_idx, (data, _) in enumerate(train):
+    for batch_idx, (data, _) in enumerate(train_loader):
         data = data.to(device)
         optimizer.zero_grad()
         dec, enc = model(data)
@@ -79,20 +80,20 @@ def train(epoch):
         optimizer.step()
         if batch_idx % 100 == 0:
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
-                epoch, batch_idx * len(data), len(train.dataset),
-                100. * batch_idx / len(train),
+                epoch, batch_idx * len(data), len(train_loader.dataset),
+                100. * batch_idx / len(train_loader),
                 loss.item() / len(data)))
-            writer.add_scalar('./data/train_loss', loss.item() / len(data), epoch*len(train) + batch_idx)
+            writer.add_scalar('./data/train_loss', loss.item() / len(data), epoch*len(train_loader) + batch_idx)
 
     print('====> Epoch: {} Average loss: {:.4f}'.format(
-          epoch, train_loss / len(train.dataset)))
+          epoch, train_loss / len(train_loader.dataset)))
 
 
 def save(epoch):
     state = {'state_dict': model.state_dict(),
              'optimizer': optimizer.state_dict(),
              'epoch': epoch + 1}
-    save_dir = './checkpoints/autoencoder/lr_{}_decay_{}'.format(int(args.lr*1000), int(args.decay*100))
+    save_dir = './checkpoints/auto_encoder/'
     if not os.path.isdir(save_dir):
         os.mkdir(save_dir)
     torch.save(state, os.path.join(save_dir, 'ae_{}.pth.tar'.format(epoch)))

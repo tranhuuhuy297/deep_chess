@@ -63,6 +63,7 @@ for i in range(1000):
     result = get_result(game)
     board = game.board()
 
+    # for move in game.mainline_moves():
     for move in game.mainline_moves():
         board.push(move)
         bitboard = get_bitboard(board)

@@ -37,12 +37,14 @@ class AE(nn.Module):
         x_e = F.leaky_relu(self.bne2(self.fce2(x_e)))
         x_e = F.leaky_relu(self.bne3(self.fce3(x_e)))
         x_e = F.leaky_relu(self.bne4(self.fce4(x_e)))
+        return x_e
 
     def decoder(self, x_e):
         x_d = F.leaky_relu(self.bnd1(self.fcd1(x_e)))
         x_d = F.leaky_relu(self.bnd2(self.fcd2(x_d)))
         x_d = F.leaky_relu(self.bnd3(self.fcd3(x_d)))
-        x_d = F.sigmoid(self.bnd4(self.fcd4(x_d)))
+        x_d = F.leaky_relu(self.bnd4(self.fcd4(x_d)))
+        return x_d
     
     def forward(self, x):
         input = self.encoder(x.view(-1, 773))
