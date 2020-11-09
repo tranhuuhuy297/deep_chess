@@ -1,6 +1,6 @@
 import torch
-import torch.utils.data
 from torch import nn, optim
+import torch.utils.data as data
 from torch.nn import functional as F
 
 
@@ -8,6 +8,7 @@ class Siamese(nn.Module):
     def __init__(self):
         super(Siamese, self).__init__()
 
+        # concatenate 2 output of AE model, dim=100
         self.fc1 = nn.Linear(200, 400)
         self.bn1 = nn.BatchNorm1d(400)
         self.fc2 = nn.Linear(400, 200)

@@ -15,7 +15,7 @@ def get_bitboard(board):
     64 squares, 6 pieces, '1' indicates the piece is at a square
     5 extra dimensions for castling rights queenside/kingside and whose turn
     '''
-    bitboard = np.zeros(64*6*2+5)
+    bitboard = np.zeros(64*6*2 + 5)
 
     '''
     p: pawn
@@ -35,10 +35,10 @@ def get_bitboard(board):
             bitboard[(piece_idx[board.piece_at(i).symbol().lower()] + i * 6) * color] = 1
 
     bitboard[-1] = int(board.turn)
-    bitboard[-2] = int(board.has_kingside_castling_rights(True))
-    bitboard[-3] = int(board.has_kingside_castling_rights(False))
-    bitboard[-4] = int(board.has_queenside_castling_rights(True))
-    bitboard[-5] = int(board.has_queenside_castling_rights(False))
+    bitboard[-2] = int(board.has_kingside_castling_rights(chess.WHITE))
+    bitboard[-3] = int(board.has_kingside_castling_rights(chess.BLACK))
+    bitboard[-4] = int(board.has_queenside_castling_rights(chess.WHITE))
+    bitboard[-5] = int(board.has_queenside_castling_rights(chess.BLACK))
 
     return bitboard
 

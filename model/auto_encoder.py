@@ -1,7 +1,7 @@
 import torch
 import argparse
-import torch.utils.data
 from torch import nn, optim
+import torch.utils.data as data
 from torch.nn import functional as F
 from torch.utils.data import Dataset
 from torchvision.utils import save_image
