@@ -57,7 +57,7 @@ bitboards = []
 labels = []
 num_games = 0
 
-for i in range(1000):
+for i in range(4000):
     num_games += 1
     game = chess.pgn.read_game(games)
     result = get_result(game)
@@ -70,8 +70,12 @@ for i in range(1000):
         bitboards.append(bitboard)
         labels.append(result)
 
+print('Done parse!')
+
 bitboards = np.array(bitboards)
 labels = np.array(labels)
 
 save('./data/bitboards.npy', bitboards)
 save('./data/labels.npy', labels)
+
+print('Done save data to numpy file!')

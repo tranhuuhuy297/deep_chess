@@ -7,26 +7,26 @@ from torch.utils.data import Dataset
 
 class TrainSet(Dataset):
     def __init__(self, train_games):
-        super().__init__
+        super().__init__()
         self.train_games = train_games
 
     def __getitem__(self, index):
-        return torch.from_numpy(train_games[index]).type(torch.FloatTensor), 0
+        return torch.from_numpy(self.train_games[index]).type(torch.FloatTensor), 0
 
     def __len__(self):
-        return train_games.shape[0]
+        return self.train_games.shape[0]
 
 
 class TestSet(Dataset):
-    def __init__(self):
+    def __init__(self, test_games):
         super().__init__()
-        pass
+        self.test_games = test_games
 
     def __getitem__(self, index):
-        return torch.from_numpy(test_games[index]).type(torch.FloatTensor), 0
+        return torch.from_numpy(self.test_games[index]).type(torch.FloatTensor), 0
 
     def __len__(self):
-        return test_games.shape[0]
+        return self.test_games.shape[0]
         
 
 def loss_AE(pred, target):
@@ -42,5 +42,5 @@ def save_weight(model, optimizer, epoch, save_dir = 'checkpoints/auto_encoder/')
              'optimizer': optimizer.state_dict(),
              'epoch': epoch + 1}
     if not os.path.isdir(save_dir):
-        os.makekdirs(save_dir)
+        os.makedirs(save_dir)
     torch.save(state, os.path.join(save_dir, 'ae_{}.pth.tar'.format(epoch)))
