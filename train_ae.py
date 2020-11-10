@@ -83,10 +83,30 @@ def train(epoch):
                 epoch, batch_idx * len(data), len(train_loader.dataset),
                 100. * batch_idx / len(train_loader),
                 loss.item() / len(data)))
-            writer.add_scalar('./data/train_loss', loss.item() / len(data), epoch*len(train_loader) + batch_idx)
+            writer.add_scalar('train_loss', loss.item() / len(data), epoch*len(train_loader) + batch_idx)
 
     print('====> Epoch: {} Average loss: {:.4f}'.format(
           epoch, train_loss / len(train_loader.dataset)))
+
+
+def test(epoch):
+    model.eval()
+    test_loss = 0
+    total_diff = 0
+    with torch.no_grad():
+        for i, (data, _) in enumerate(test_loader):
+            data = data.to(device)
+            dec, enc = model(data)
+            pred = (dec.cpu().detach().numpy() > .5).astype(int)
+            total_diff += float(np.sum(data.cpu().detach().numpy() != pred))
+            test_loss += loss_AE(dec, data).item()
+
+    test_loss /= len(test_loader.dataset)
+    total_diff /= len(test_loader.dataset)
+    print('====> Test set loss: {:.4f}'.format(test_loss))
+    print('====> Test set diff: {:.4f}'.format(total_diff))
+    writer.add_scalar('test_loss', test_loss, epoch)
+    writer.add_scalar('test_diff', total_diff, epoch)
 
 
 def save(epoch):
@@ -99,15 +119,10 @@ def save(epoch):
     torch.save(state, os.path.join(save_dir, 'ae_{}.pth.tar'.format(epoch)))
 
 
-def dec(game):
-    dec, _ = model(torch.from_numpy(game).type(torch.FloatTensor))
-    dec = (dec.cpu().detach().numpy() > .5).astype(int)
-    return dec
-
-
 for epoch in range(1, args.epoch + 1):
     train(epoch)
-    save(epoch)
+    test(epoch)
+    if epoch==200: save(epoch)
 
     # Adjust learning rate
     for params in optimizer.param_groups:
