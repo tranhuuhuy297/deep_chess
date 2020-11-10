@@ -7,8 +7,8 @@ import torch.utils.data as data
 from torch.utils.data import Dataset
 from torch.nn import functional as F
 from tensorboardX import SummaryWriter
-from utils import loss_AE
 from model.auto_encoder import AE
+from utils import loss_AE, save_weight, TrainSet, TestSet
 
 
 parser = argparse.ArgumentParser()
@@ -38,30 +38,8 @@ np.random.shuffle(games)
 train_games = games[:int(len(games)*.85)]
 test_games  = games[int(len(games)*.85):]
 
-class TrainSet(Dataset):
-    def __init__(self):
-        super().__init__
-        pass
-
-    def __getitem__(self, index):
-        return torch.from_numpy(train_games[index]).type(torch.FloatTensor), 0
-
-    def __len__(self):
-        return train_games.shape[0]
-
-class TestSet(Dataset):
-    def __init__(self):
-        super().__init__()
-        pass
-
-    def __getitem__(self, index):
-        return torch.from_numpy(test_games[index]).type(torch.FloatTensor), 0
-
-    def __len__(self):
-        return test_games.shape[0]
-
-train_loader = data.DataLoader(TrainSet(), batch_size=args.batch, shuffle=True)
-test_loader  = data.DataLoader(TestSet(), batch_size=args.batch, shuffle=True)
+train_loader = data.DataLoader(TrainSet(train_games), batch_size=args.batch, shuffle=True)
+test_loader  = data.DataLoader(TestSet(test_games), batch_size=args.batch, shuffle=True)
 
 model = AE().to(device)
 optimizer = optim.Adam(model.parameters(), lr=args.lr)
@@ -109,20 +87,10 @@ def test(epoch):
     writer.add_scalar('test_diff', total_diff, epoch)
 
 
-def save(epoch):
-    state = {'state_dict': model.state_dict(),
-             'optimizer': optimizer.state_dict(),
-             'epoch': epoch + 1}
-    save_dir = 'checkpoints/auto_encoder/'
-    if not os.path.isdir(save_dir):
-        os.makekdirs(save_dir)
-    torch.save(state, os.path.join(save_dir, 'ae_{}.pth.tar'.format(epoch)))
-
-
 for epoch in range(1, args.epoch + 1):
     train(epoch)
     test(epoch)
-    if epoch==200: save(epoch)
+    save_weight(model, optimizer, epoch=args.epoch)
 
     # Adjust learning rate
     for params in optimizer.param_groups:
