@@ -12,7 +12,8 @@ model.load_state_dict(state['state_dict'])
 
 games = np.load('./data/bitboards.npy')
 
-batched_games = np.split(games, )
+# len: 554116 for 4000 epoch parse data
+batched_games = np.split(games, 19)
 
 def featurize(game):
     _, enc = model(torch.from_numpy(game).type(torch.FloatTensor).to(device))
