@@ -77,8 +77,7 @@ def train(epoch):
                 loss.item() / len(data)))
             writer.add_scalar('train_loss', loss.item() / len(data), epoch*len(train_loader) + batch_idx)
     
-    print('====> Epoch: {} Average loss: {:.4f}'.format(
-        epoch, train_loss / len(train_loader.dataset)))
+    print('====> Epoch: {} Average loss: {:.4f}'.format(epoch, train_loss / len(train_loader.dataset)))
 
 get_acc(model, device, test_loader)
 
@@ -93,8 +92,9 @@ def test(epoch):
             test_loss += loss_model(pred, label).item()
 
     test_loss /= len(test_loader.dataset)
-    print('====> Test set loss: {:.4f}'.format(test_loss))
     writer.add_scalar('data/test_loss', test_loss, epoch)
+    
+    print('====> Test set loss: {:.4f}'.format(test_loss))
 
 for epoch in range(1, args.epoch + 1):
     train(epoch)

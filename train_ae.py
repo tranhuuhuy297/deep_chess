@@ -78,8 +78,9 @@ def test(epoch):
             test_loss += loss_AE(dec, data).item()
 
     test_loss /= len(test_loader.dataset)
-    print('====> Test set loss: {:.4f}'.format(test_loss))
     writer.add_scalar('test_loss', test_loss, epoch)
+    
+    print('====> Test set loss: {:.4f}'.format(test_loss))
 
 
 for epoch in range(1, args.epoch + 1):
