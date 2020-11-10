@@ -8,7 +8,7 @@ from torch.utils.data import Dataset
 from torch.nn import functional as F
 from tensorboardX import SummaryWriter
 from model.auto_encoder import AE
-from utils import loss_AE, save_weight, TrainSet, TestSet
+from utils import loss_AE, TrainSet_AE, TestSet_AE
 
 
 parser = argparse.ArgumentParser()
@@ -38,8 +38,8 @@ np.random.shuffle(games)
 train_games = games[:int(len(games)*.85)]
 test_games  = games[int(len(games)*.85):]
 
-train_loader = data.DataLoader(TrainSet(train_games), batch_size=args.batch, shuffle=True)
-test_loader  = data.DataLoader(TestSet(test_games), batch_size=args.batch, shuffle=True)
+train_loader = data.DataLoader(TrainSet_AE(train_games), batch_size=args.batch, shuffle=True)
+test_loader  = data.DataLoader(TestSet_AE(test_games), batch_size=args.batch, shuffle=True)
 
 model = AE().to(device)
 optimizer = optim.Adam(model.parameters(), lr=args.lr)
@@ -56,6 +56,7 @@ def train(epoch):
         loss.backward()
         train_loss += loss.item()
         optimizer.step()
+
         if batch_idx % 100 == 0:
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset),
@@ -70,28 +71,23 @@ def train(epoch):
 def test(epoch):
     model.eval()
     test_loss = 0
-    total_diff = 0
     with torch.no_grad():
         for i, (data, _) in enumerate(test_loader):
             data = data.to(device)
             dec, enc = model(data)
-            pred = (dec.cpu().detach().numpy() > .5).astype(int)
-            total_diff += float(np.sum(data.cpu().detach().numpy() != pred))
             test_loss += loss_AE(dec, data).item()
 
     test_loss /= len(test_loader.dataset)
-    total_diff /= len(test_loader.dataset)
     print('====> Test set loss: {:.4f}'.format(test_loss))
-    print('====> Test set diff: {:.4f}'.format(total_diff))
     writer.add_scalar('test_loss', test_loss, epoch)
-    writer.add_scalar('test_diff', total_diff, epoch)
 
 
 for epoch in range(1, args.epoch + 1):
     train(epoch)
     test(epoch)
-    save_weight(model, optimizer, epoch=args.epoch)
 
     # Adjust learning rate
     for params in optimizer.param_groups:
         params['lr'] *= args.decay
+
+# torch.save(model.state_dict(), 'ae.pth')

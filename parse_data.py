@@ -1,6 +1,6 @@
 import chess.pgn
 import numpy as np
-from numpy import save
+
 
 def get_bitboard(board):
     '''
@@ -75,7 +75,7 @@ print('Done parse!')
 bitboards = np.array(bitboards)
 labels = np.array(labels)
 
-save('./data/bitboards.npy', bitboards)
-save('./data/labels.npy', labels)
+np.save('./data/bitboards.npy', bitboards)
+np.save('./data/labels.npy', labels)
 
 print('Done save data to numpy file!')
