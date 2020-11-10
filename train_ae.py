@@ -113,9 +113,9 @@ def save(epoch):
     state = {'state_dict': model.state_dict(),
              'optimizer': optimizer.state_dict(),
              'epoch': epoch + 1}
-    save_dir = './checkpoints/auto_encoder/'
+    save_dir = 'checkpoints/auto_encoder/'
     if not os.path.isdir(save_dir):
-        os.mkdir(save_dir)
+        os.makekdirs(save_dir)
     torch.save(state, os.path.join(save_dir, 'ae_{}.pth.tar'.format(epoch)))
 
 
