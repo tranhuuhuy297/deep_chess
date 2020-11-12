@@ -2,13 +2,11 @@ import os
 import torch
 import argparse
 import numpy as np
-from torch import nn, optim
+from torch import optim
 import torch.utils.data as data
-from torch.utils.data import Dataset
-from torch.nn import functional as F
 from tensorboardX import SummaryWriter
-from utils import loss_model, TrainSet, TestSet, get_acc
 from model.siamese import Siamese
+from utils import loss_model, TrainSet, TestSet
 
 
 parser = argparse.ArgumentParser()
@@ -39,10 +37,12 @@ shuffle = np.random.permutation(len(labels))
 games = games[shuffle]
 labels = labels[shuffle]
 
+print('Done load!')
+
 train_games = games[:int(len(games)*.85)]
 train_label_win = labels[: int(len(games)*.85)]
 test_games = games[int(len(games)*.85):]
-test_label_win = games[int(len(games)*.85):]
+test_label_win = labels[int(len(games)*.85):]
 
 train_games_win = train_games[train_label_win == 1]
 train_games_loss = train_games[train_label_win == -1]
@@ -50,8 +50,8 @@ train_games_loss = train_games[train_label_win == -1]
 test_games_win = test_games[test_label_win == 1]
 test_games_loss = test_games[test_label_win == -1]
 
-train_loader = torch.utils.data.DataLoader(TrainSet(train_games_win, train_games_loss),batch_size=args.batch, shuffle=True)
-test_loader = torch.utils.data.DataLoader(TestSet(test_games_win, test_games_loss),batch_size=args.batch, shuffle=True)
+train_loader = data.DataLoader(TrainSet(train_games_win, train_games_loss), batch_size=args.batch, shuffle=True)
+test_loader = data.DataLoader(TestSet(test_games_win, test_games_loss), batch_size=args.batch, shuffle=True)
 
 print('Building model...')
 model = Siamese().to(device)
@@ -79,8 +79,6 @@ def train(epoch):
     
     print('====> Epoch: {} Average loss: {:.4f}'.format(epoch, train_loss / len(train_loader.dataset)))
 
-get_acc(model, device, test_loader)
-
 def test(epoch):
     model.eval()
     test_loss = 0
@@ -92,7 +90,7 @@ def test(epoch):
             test_loss += loss_model(pred, label).item()
 
     test_loss /= len(test_loader.dataset)
-    writer.add_scalar('data/test_loss', test_loss, epoch)
+    writer.add_scalar('test_loss', test_loss, epoch)
     
     print('====> Test set loss: {:.4f}'.format(test_loss))
 

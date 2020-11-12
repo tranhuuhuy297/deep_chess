@@ -1,6 +1,5 @@
 import torch
-from torch import nn, optim
-import torch.utils.data as data
+from torch import nn
 from torch.nn import functional as F
 
 

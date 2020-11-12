@@ -2,10 +2,8 @@ import os
 import torch
 import argparse
 import numpy as np
-from torch import nn, optim
+from torch import optim
 import torch.utils.data as data
-from torch.utils.data import Dataset
-from torch.nn import functional as F
 from tensorboardX import SummaryWriter
 from model.auto_encoder import AE
 from utils import loss_AE, TrainSet_AE, TestSet_AE

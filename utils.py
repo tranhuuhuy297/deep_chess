@@ -45,7 +45,7 @@ class TrainSet(Dataset):
             stacked = np.hstack((rand_win, rand_loss))
             stacked = torch.from_numpy(stacked).type(torch.FloatTensor)
             label = torch.from_numpy(np.array([1, 0])).type(torch.FloatTensor)
-            return (stacked, label)
+            return stacked, label
         else:
             stacked = np.hstack((rand_loss, rand_win))
             stacked = torch.from_numpy(stacked).type(torch.FloatTensor)
@@ -53,7 +53,7 @@ class TrainSet(Dataset):
             return stacked, label
 
     def __len__(self):
-        pass
+        return len(self.train_games_win) + len(self.train_games_loss)
 
 
 class TestSet(Dataset):
@@ -70,7 +70,7 @@ class TestSet(Dataset):
             stacked = np.hstack((rand_win, rand_loss))
             stacked = torch.from_numpy(stacked).type(torch.FloatTensor)
             label = torch.from_numpy(np.array([1, 0])).type(torch.FloatTensor)
-            return (stacked, label)
+            return stacked, label
         else:
             stacked = np.hstack((rand_loss, rand_win))
             stacked = torch.from_numpy(stacked).type(torch.FloatTensor)
@@ -78,7 +78,7 @@ class TestSet(Dataset):
             return stacked, label
 
     def __len__(self):
-        pass
+        return len(self.test_games_win) + len(self.test_games_loss)
 
 
 def loss_AE(pred, target):
@@ -88,10 +88,3 @@ def loss_AE(pred, target):
 def loss_model(pred, target):
     BCE = F.binary_cross_entropy(pred, target.view(-1, 2), size_average=False)
     return BCE
-
-def get_acc(model, device, test_loader):
-    correct = 0
-    for batch_idx, (data, label) in enumerate(test_loader):
-        pred = model(data.to(device))
-        correct += np.sum((pred > .5).cpu().detach().numpy() * label.numpy())
-    return correct / float(test_loader.dataset.length)

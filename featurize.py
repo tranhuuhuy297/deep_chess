@@ -2,13 +2,12 @@ import torch
 import numpy as np
 from model.auto_encoder import AE
 
-device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
-model = AE().to(device)
+model = AE()
 
-state = torch.load('./checkpoints/auto_encoder/ae_200.pth.tar', map_location=lambda storage, loc: storage.cuda(0))
+state = torch.load('./checkpoints/ae.pth', map_location=lambda storage, loc: storage.cuda(0))
 
-model.load_state_dict(state['state_dict'])
+model.load_state_dict(state)
 
 games = np.load('./data/bitboards.npy')
 
@@ -16,7 +15,7 @@ games = np.load('./data/bitboards.npy')
 batched_games = np.split(games, 19)
 
 def featurize(game):
-    _, enc = model(torch.from_numpy(game).type(torch.FloatTensor).to(device))
+    _, enc = model(torch.from_numpy(game).type(torch.FloatTensor))
     return enc.detach().numpy()
 
 feat_games = [featurize(batch) for batch in batched_games]
