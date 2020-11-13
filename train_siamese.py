@@ -12,8 +12,8 @@ from utils import loss_model, TrainSet, TestSet
 parser = argparse.ArgumentParser()
 parser.add_argument('--batch', type=int, default=512,
                     help='batch_size for training, default=512')
-parser.add_argument('--epoch', type=int, default=1000,
-                    help='number epochs for training, default=200')
+parser.add_argument('--epoch', type=int, default=500,
+                    help='number epochs for training, default=500')
 parser.add_argument('--lr', type=float, default=0.01,
                     help='lr begin from 0.005, *0.98 after epoch')
 parser.add_argument('--decay', type=float, default=0.99,

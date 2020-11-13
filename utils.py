@@ -1,5 +1,6 @@
 import os
 import torch
+import gdown
 import numpy as np
 from torch.nn import functional as F
 from torch.utils.data import Dataset
@@ -88,3 +89,11 @@ def loss_AE(pred, target):
 def loss_model(pred, target):
     BCE = F.binary_cross_entropy(pred, target.view(-1, 2), size_average=False)
     return BCE
+
+def download_weights(id_or_url, cached=None, md5=None, quiet=False):
+    if id_or_url.startswith('http'):
+        url = id_or_url
+    else:
+        url = 'https://drive.google.com/uc?export=download&id={}'.format(id_or_url)
+
+    return gdown.cached_download(url=url, path=cached, md5=md5, quiet=quiet)
