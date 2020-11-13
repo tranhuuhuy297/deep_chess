@@ -6,6 +6,7 @@ from torch.nn import functional as F
 from torch.utils.data import Dataset
 
 
+# Dataset for Auto encoder
 class TrainSet_AE(Dataset):
     def __init__(self, train_games):
         super().__init__()
@@ -29,7 +30,7 @@ class TestSet_AE(Dataset):
     def __len__(self):
         return self.test_games.shape[0]
         
-
+# dataset for Siamese
 class TrainSet(Dataset):
     def __init__(self, train_games_win, train_games_loss):
         self.train_games_win = train_games_win
@@ -81,7 +82,7 @@ class TestSet(Dataset):
     def __len__(self):
         return len(self.test_games_win) + len(self.test_games_loss)
 
-
+# 2 loss function 
 def loss_AE(pred, target):
     BCE = F.mse_loss(pred, target.view(-1, 773), size_average=False)
     return BCE
@@ -90,6 +91,7 @@ def loss_model(pred, target):
     BCE = F.binary_cross_entropy(pred, target.view(-1, 2), size_average=False)
     return BCE
 
+# download weight from my driver
 def download_weights(id_or_url, cached=None, md5=None, quiet=False):
     if id_or_url.startswith('http'):
         url = id_or_url
@@ -97,3 +99,27 @@ def download_weights(id_or_url, cached=None, md5=None, quiet=False):
         url = 'https://drive.google.com/uc?export=download&id={}'.format(id_or_url)
 
     return gdown.cached_download(url=url, path=cached, md5=md5, quiet=quiet)
+
+# Decode movement
+def featurize(featurizer, boards, device):
+    boards = torch.from_numpy(boards).type(torch.FloatTensor).to(device)
+    return featurizer(boards)
+
+# Compare which one is better for black to win player
+def compare(comparator, features, device):
+    features = torch.from_numpy(features).type(torch.FloatTensor).to(device)
+    return comparator(features).cpu().detach().numpy()
+
+# Gen all pair movements
+def gen_compare_array(features):
+    catcats = []
+    for feature in features:
+        cats = []
+        for compared in features:
+            cats.append(np.hstack((feature, compared)))
+        cats = np.array(cats)
+        catcats.append(cats)
+    return np.vstack(catcats)
+
+
+

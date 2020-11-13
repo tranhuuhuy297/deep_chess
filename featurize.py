@@ -1,11 +1,14 @@
 import torch
 import numpy as np
+from utils import download_weights
 from model.auto_encoder import AE
 
 
+weight = download_weights('https://drive.google.com/uc?export=download&id=1ZsRsjDF8T3e44JwpIkS5drWjtfqocDrv')
+
 model = AE()
 
-state = torch.load('./checkpoints/ae.pth', map_location=lambda storage, loc: storage.cuda(0))
+state = torch.load(weight, map_location=lambda storage, loc: storage.cuda(0))
 
 model.load_state_dict(state)
 
