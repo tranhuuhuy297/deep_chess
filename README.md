@@ -1,7 +1,7 @@
 # CHESS
-*Paper: https://arxiv.org/pdf/1711.09667v1.pdf
-*Khuyên dùng: Ubuntu 18.04 +
-*Cài đặt môi trường:
+* Paper: https://arxiv.org/pdf/1711.09667v1.pdf
+* Khuyên dùng: Ubuntu 18.04 +
+* Cài đặt môi trường:
 ```
 pip install -r requirements.txt
 ```
