@@ -10,19 +10,19 @@ pip install -r requirements.txt
 python play.py
 ```
 ## Train
-Xử  lý dữ liệu từ các game records
+* Xử  lý dữ liệu từ các game records
 ```
 python parse_data.py
 ```
-Train model Auto Encoder 
+* Train model Auto Encoder 
 ```
 python train_ae.py
 ```
-Lấy output của 2 nhánh model Auto Encoder làm input cho model Siamese
+* Lấy output của 2 nhánh model Auto Encoder làm input cho model Siamese
 ```
 python featurize.py
 ```
-Train model Siamese
+* Train model Siamese
 ```
 python train_siamese.py
 ```
