@@ -29,5 +29,6 @@ python train_siamese.py
 ## Results
 * Auto Encoder
 <img src='./results/AE.png'/>
+
 * Siamese
 <img src='./results/Siamese.png'/>
