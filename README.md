@@ -28,6 +28,6 @@ python train_siamese.py
 ```
 ## Results
 * Auto Encoder
-![alt]('./results/AE.png')
+<img src='./results/AE.png'/>
 * Siamese
-![alt]('./results/Siamese.png')
+<img src='./results/Siamese.png'/>
