@@ -53,11 +53,12 @@ def get_result(game):
         return 0
 
 games = open('./data/CCRL-4040.[1187224].pgn')
-bitboards = []
-labels = []
-num_games = 0
 
-for i in range(4000):
+num_games = 0
+while (num_games<80000):
+  bitboards = []
+  labels = []
+  for i in range(4000):
     num_games += 1
     game = chess.pgn.read_game(games)
     result = get_result(game)
@@ -68,7 +69,13 @@ for i in range(4000):
         board.push(move)
         bitboard = get_bitboard(board)
         bitboards.append(bitboard)
-        labels.append(result)
+        labels.append(result) 
+  
+  bitboards = np.array(bitboards)
+  labels = np.array(labels)
+
+  np.save('./data/bitboards_' + str(num_games) + '.npy', bitboards)
+  np.save('./data/labels_' + str(num_games) + '.npy', labels)
 
 print('Done parse!')
 
