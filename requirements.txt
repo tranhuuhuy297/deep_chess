@@ -79,8 +79,6 @@ tensorboard-plugin-wit==1.7.0
 tensorboardX==2.1
 terminado==0.9.1
 testpath==0.4.4
-torch==1.6.0+cu101
-torchvision==0.7.0+cu101
 tornado==6.0.4
 tqdm==4.51.0
 traitlets==5.0.5
