@@ -55,7 +55,7 @@ def get_result(game):
 games = open('./data/CCRL-4040.[1187224].pgn')
 
 num_games = 0
-while (num_games<80000):
+while (num_games<40000):
   bitboards = []
   labels = []
   for i in range(4000):
@@ -74,15 +74,8 @@ while (num_games<80000):
   bitboards = np.array(bitboards)
   labels = np.array(labels)
 
-  np.save('./data/bitboards_' + str(num_games) + '.npy', bitboards)
-  np.save('./data/labels_' + str(num_games) + '.npy', labels)
+  np.save('./data/bitboard/bitboards_' + str(num_games) + '.npy', bitboards)
+  np.save('./data/label/labels_' + str(num_games) + '.npy', labels)
 
 print('Done parse!')
-
-bitboards = np.array(bitboards)
-labels = np.array(labels)
-
-np.save('./data/bitboards.npy', bitboards)
-np.save('./data/labels.npy', labels)
-
 print('Done save data to numpy file!')

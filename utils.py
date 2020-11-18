@@ -11,24 +11,36 @@ class TrainSet_AE(Dataset):
     def __init__(self, train_games):
         super().__init__()
         self.train_games = train_games
+        self.bitboard = None
+
+        for board in list(train_games):
+            temp = np.load(board)
+            self.bitboard = temp[:int(len(temp)*.85)]
+            np.random.shuffle(self.bitboard)
 
     def __getitem__(self, index):
-        return torch.from_numpy(self.train_games[index]).type(torch.FloatTensor), 0
+        return torch.from_numpy(self.bitboard).type(torch.FloatTensor), 0
 
     def __len__(self):
-        return self.train_games.shape[0]
+        return self.bitboard.shape[0]
 
 
 class TestSet_AE(Dataset):
     def __init__(self, test_games):
         super().__init__()
         self.test_games = test_games
+        self.bitboard = None
+
+        for board in list(test_games):
+            temp = np.load(board)
+            self.bitboard = temp[int(len(temp)*.85):]
+            np.random.shuffle(self.bitboard)
 
     def __getitem__(self, index):
-        return torch.from_numpy(self.test_games[index]).type(torch.FloatTensor), 0
+        return torch.from_numpy(self.bitboard[index]).type(torch.FloatTensor), 0
 
     def __len__(self):
-        return self.test_games.shape[0]
+        return self.bitboard.shape[0]
         
 # dataset for Siamese
 class TrainSet(Dataset):

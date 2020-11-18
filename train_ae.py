@@ -29,15 +29,21 @@ torch.manual_seed(args.seed)
 writer = SummaryWriter(comment='Lr: {} | batch_size: {}'.format(args.lr, args.batch))
 
 print("Loading data...")
-games = np.load('./data/bitboards.npy')
 
-np.random.shuffle(games)
+# games = np.load('./data/bitboards.npy')
 
-train_games = games[:int(len(games)*.85)]
-test_games  = games[int(len(games)*.85):]
+# np.random.shuffle(games)
 
-train_loader = data.DataLoader(TrainSet_AE(train_games), batch_size=args.batch, shuffle=True)
-test_loader  = data.DataLoader(TestSet_AE(test_games), batch_size=args.batch, shuffle=True)
+# train_games = games[:int(len(games)*.85)]
+# test_games  = games[int(len(games)*.85):]
+
+games = []
+
+for file in os.listdir('./data/bitboard'):
+    games.append(file)
+
+train_loader = data.DataLoader(TrainSet_AE(games), batch_size=args.batch, shuffle=True)
+test_loader  = data.DataLoader(TestSet_AE(games), batch_size=args.batch, shuffle=True)
 
 model = AE().to(device)
 optimizer = optim.Adam(model.parameters(), lr=args.lr)
