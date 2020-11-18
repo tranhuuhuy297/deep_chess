@@ -1,3 +1,4 @@
+import os
 import chess.pgn
 import numpy as np
 
@@ -53,6 +54,12 @@ def get_result(game):
         return 0
 
 games = open('./data/CCRL-4040.[1187224].pgn')
+
+if not os.path.isdir('./data/bitboard'):
+    os.mkdir('./data/bitboard')
+
+if not os.path.isdir('./data/label'):
+    os.mkdir('./data/label')
 
 num_games = 0
 while (num_games<40000):
