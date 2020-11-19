@@ -9,7 +9,7 @@ games = []
 for file in os.listdir('./data/bitboard'):
     games.append(file)
 
-weight = download_weights('https://drive.google.com/uc?export=download&id=1ZsRsjDF8T3e44JwpIkS5drWjtfqocDrv')
+weight = download_weights('https://drive.google.com/uc?export=download&id=1oJvyy4Ec3vYmZOqN54F7_PrqY-DXdyvs')
 
 model = AE()
 
