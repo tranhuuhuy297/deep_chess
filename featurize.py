@@ -32,4 +32,3 @@ for game in list(games):
 
     os.remove('data/bitboard/' + game)
     np.save('./data/features.npy', featurized)
-
