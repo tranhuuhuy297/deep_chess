@@ -6,7 +6,8 @@ from torch import optim
 import torch.utils.data as data
 from tensorboardX import SummaryWriter
 from model.auto_encoder import AE
-from utils import loss_AE, TrainSet_AE, TestSet_AE
+from utils import loss_AE
+from data_generator import TrainSet_AE, TestSet_AE
 
 
 parser = argparse.ArgumentParser()
@@ -30,15 +31,8 @@ writer = SummaryWriter(comment='Lr: {} | batch_size: {}'.format(args.lr, args.ba
 
 print("Loading data...")
 
-# games = np.load('./data/bitboards.npy')
-
-# np.random.shuffle(games)
-
-# train_games = games[:int(len(games)*.85)]
-# test_games  = games[int(len(games)*.85):]
 
 games = []
-
 for file in os.listdir('./data/bitboard'):
     games.append(file)
 
@@ -95,4 +89,4 @@ for epoch in range(1, args.epoch + 1):
     for params in optimizer.param_groups:
         params['lr'] *= args.decay
 
-# torch.save(model.state_dict(), 'ae.pth')
+torch.save(model.state_dict(), 'ae.pth')

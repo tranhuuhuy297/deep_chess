@@ -6,7 +6,8 @@ from torch import optim
 import torch.utils.data as data
 from tensorboardX import SummaryWriter
 from model.siamese import Siamese
-from utils import loss_model, TrainSet, TestSet
+from utils import loss_model
+from data_generator import TrainSet, TestSet
 
 
 parser = argparse.ArgumentParser()
@@ -30,28 +31,16 @@ writer = SummaryWriter(comment='Lr: {} | batch_size: {}'.format(args.lr, args.ba
 
 print("Loading data...")
 
-games = np.load('./data/features.npy')
-labels = np.load('./data/labels.npy')
+games = []
+for file in os.listdir('./data/bitboard'):
+    games.append(file)
 
-shuffle = np.random.permutation(len(labels))
-games = games[shuffle]
-labels = labels[shuffle]
+labels = []
+for file in os.listdir('./data/label'):
+    labels.append(file)
 
-print('Done load!')
-
-train_games = games[:int(len(games)*.85)]
-train_label_win = labels[: int(len(games)*.85)]
-test_games = games[int(len(games)*.85):]
-test_label_win = labels[int(len(games)*.85):]
-
-train_games_win = train_games[train_label_win == 1]
-train_games_loss = train_games[train_label_win == -1]
-
-test_games_win = test_games[test_label_win == 1]
-test_games_loss = test_games[test_label_win == -1]
-
-train_loader = data.DataLoader(TrainSet(train_games_win, train_games_loss), batch_size=args.batch, shuffle=True)
-test_loader = data.DataLoader(TestSet(test_games_win, test_games_loss), batch_size=args.batch, shuffle=True)
+train_loader = data.DataLoader(TrainSet(games, labels), batch_size=args.batch, shuffle=True)
+test_loader = data.DataLoader(TestSet(games, labels), batch_size=args.batch, shuffle=True)
 
 print('Building model...')
 model = Siamese().to(device)
@@ -102,4 +91,4 @@ for epoch in range(1, args.epoch + 1):
     for param_group in optimizer.param_groups:
         param_group['lr'] = param_group['lr'] * args.decay
 
-# torch.save(model.state_dict(), 'siamese.pth')
+torch.save(model.state_dict(), 'siamese.pth')
