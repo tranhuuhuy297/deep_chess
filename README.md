@@ -6,7 +6,6 @@
 ```
 pip install -r requirements.txt
 ```
-```
 ## Play Chess
 ```
 python play.py
