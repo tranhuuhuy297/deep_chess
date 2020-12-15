@@ -10,3 +10,7 @@ pip install -r requirements.txt
 ```
 python play.py
 ```
+## Results
+```
+tensorboard --logdir=runs
+```
