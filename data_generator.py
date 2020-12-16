@@ -55,11 +55,11 @@ class TrainSet(Dataset):
         self.train_games_loss = None
 
         for file in list(self.games):
-            game = np.load('data/bitboard/' + file)
+            game = np.load(file)
             self.train_games = game[:int(len(game)*.85)]
         
         for file in list(self.labels):
-            label = np.load('data/label/' + file)
+            label = np.load(file)
             self.train_label_win = label[:int(len(label)*.85)]
 
         self.train_games_win = self.train_games[self.train_label_win == 1]
@@ -98,11 +98,11 @@ class TestSet(Dataset):
         self.test_games_loss = None
 
         for file in list(self.games):
-            game = np.load('data/bitboard/' + file)
+            game = np.load(file)
             self.test_games = game[int(len(game)*.85):]
         
         for file in list(self.labels):
-            label = np.load('data/label/' + file)
+            label = np.load(file)
             self.test_label_win = label[int(len(label)*.85):]
 
         self.test_games_win = self.test_games[self.test_label_win == 1]

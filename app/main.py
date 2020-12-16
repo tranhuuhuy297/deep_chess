@@ -17,7 +17,7 @@ from utils import download_weights, featurize, compare, gen_compare_array
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
 ae_weight = download_weights('https://drive.google.com/uc?export=download&id=1ZsRsjDF8T3e44JwpIkS5drWjtfqocDrv')
-siamese_weight = download_weights('https://drive.google.com/uc?export=download&id=1-MaSz_KX2xkYQJzL8f5-aA5kyamz_pjr')
+siamese_weight = download_weights('https://drive.google.com/uc?export=download&id=1e76zvAoIz0d9xt3LCl5k0cwcpNwhEaJb')
 
 ae_state = torch.load(ae_weight, map_location=lambda storage, loc: storage.cuda(0))
 siamese_state = torch.load(siamese_weight, map_location=lambda storage, loc: storage.cuda(0))

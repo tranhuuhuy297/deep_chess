@@ -33,11 +33,11 @@ print("Loading data...")
 
 games = []
 for file in os.listdir('./data/bitboard'):
-    games.append(file)
+    games.append('./data/bitboard/' + file)
 
 labels = []
 for file in os.listdir('./data/label'):
-    labels.append(file)
+    labels.append('./data/label/' + file)
 
 train_loader = data.DataLoader(TrainSet(games, labels), batch_size=args.batch, shuffle=True)
 test_loader = data.DataLoader(TestSet(games, labels), batch_size=args.batch, shuffle=True)

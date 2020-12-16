@@ -1,6 +1,7 @@
 # Byte-compiled
 __pycache__/
 model/__pycache__
+app/__pycache__
 
 # IDE
 .vscode/
