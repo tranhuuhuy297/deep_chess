@@ -1,6 +1,8 @@
 import os
 import torch
 import gdown
+import base64
+import chess
 import numpy as np
 from torch.nn import functional as F
 
@@ -44,5 +46,5 @@ def gen_compare_array(features):
         catcats.append(cats)
     return np.vstack(catcats)
 
-
-
+def to_svg(s):
+  return base64.b64encode(chess.svg.board(board=s.board).encode('utf-8')).decode('utf-8')

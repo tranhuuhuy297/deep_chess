@@ -2,13 +2,16 @@ import os
 import time
 import torch
 import chess
+import random
 import base64
 import chess.svg
 import traceback
 import numpy as np
 from flask import Flask, Response, request
 from app import app
+from utils import to_svg
 from app.state import State
+from model.alpha_beta import *
 from model.auto_encoder import AE
 from model.siamese import Siamese
 from utils import download_weights, featurize, compare, gen_compare_array
@@ -89,40 +92,16 @@ def get_best_move(board):
 
   to_compare = np.hstack((np.repeat(curr_features, len(moves), axis=0), features))
   scores = compare(comparator, to_compare, device)
-  scores = scores[:, 1]
+  scores = scores[:, 0]
   best_idx = np.argmax(scores)
   board.push(moves[best_idx])
+
+  return moves[best_idx]
 
 @app.route("/")
 def hello():
   ret = open("./app/index.html").read()
   return ret.replace('start', s.board.fen())
-
-# move given in algebraic notation
-@app.route("/move")
-def move():
-  if not s.board.is_game_over():
-    move = request.args.get('move',default="")
-    if move is not None and move != "":
-      print("Human moves:", move)
-      try:
-        s.board.push_san(move)
-        get_best_move(s.board)
-      except Exception:
-        traceback.print_exc()
-      response = app.response_class(
-        response=s.board.fen(),
-        status=200
-      )
-      return response
-  else:
-    print("GAME IS OVER")
-    response = app.response_class(
-      response="game over",
-      status=200
-    )
-    return response
-  return hello()
 
 # moves given as coordinates of piece moved
 @app.route("/move_coordinates")
@@ -138,7 +117,10 @@ def move_coordinates():
       print("Human moves:", move)
       try:
         s.board.push_san(move)
-        get_best_move(s.board)
+        # get_best_move(s.board)
+        move_comp = minimaxRoot(3, s.board, True)
+        move_comp = chess.Move.from_uci(str(move_comp))
+        s.board.push(move_comp)
       except Exception:
         traceback.print_exc()
     response = app.response_class(
@@ -162,3 +144,29 @@ def newgame():
     status=200
   )
   return response
+
+@app.route("/selfplay")
+def selfplay():
+  s.board.reset()
+  moves = list(s.board.generate_legal_moves())
+  random_dl_move = random.randint(0, len(moves))
+  s.board.push(moves[random_dl_move])
+
+  print("Deep Learning moves: ", moves[random_dl_move])
+  move_comp = minimaxRoot(3, s.board, True)
+  move_comp = chess.Move.from_uci(str(move_comp))
+  print("Minimax move: ", move_comp)
+  s.board.push(move_comp)
+
+  while not s.board.is_game_over():
+    move = get_best_move(s.board)
+    print("Deep Learning moves:", move)
+    move_comp = minimaxRoot(3, s.board, True)
+    move_comp = chess.Move.from_uci(str(move_comp))
+    print("Minimax move: ", move_comp)
+    s.board.push(move_comp)
+    response = app.response_class(
+      response=s.board.fen(),
+      status=200
+    )
+    return response

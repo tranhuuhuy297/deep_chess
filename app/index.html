@@ -12,9 +12,10 @@
 
 </head>
 
-<body style="font-size: 20px;">
+<body style="font-size: 20px; float: left;">
 
-    <button onclick="newGame()">new game</button><br/>
+    <button onclick="newGame()">New Game</button><br/>
+    <button onclick="selfPlay()">Self Play</button><br/>
     <div id="board" style="width: 600px"></div>
     <p></p>
 
@@ -63,6 +64,13 @@
 
         function newGame() {
             $.get('/newgame', function(r) {
+                document.querySelector('p').innerText = '';
+                board.position(r);
+            });
+        }
+
+        function selfPlay() {
+            $.get('/selfplay', function(r) {
                 document.querySelector('p').innerText = '';
                 board.position(r);
             });
