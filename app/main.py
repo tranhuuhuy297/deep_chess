@@ -9,12 +9,13 @@ import traceback
 import numpy as np
 from flask import Flask, Response, request
 from app import app
-from utils import to_svg
 from app.state import State
 from model.alpha_beta import *
 from model.auto_encoder import AE
 from model.siamese import Siamese
+from utils import to_svg, convert
 from utils import download_weights, featurize, compare, gen_compare_array
+import ChessEngine
 
 
 device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
@@ -117,10 +118,10 @@ def move_coordinates():
       print("Human moves:", move)
       try:
         s.board.push_san(move)
-        # get_best_move(s.board)
-        move_comp = minimaxRoot(3, s.board, True)
-        move_comp = chess.Move.from_uci(str(move_comp))
-        s.board.push(move_comp)
+        get_best_move(s.board)
+        # move_comp = minimaxRoot(3, s.board, True)
+        # move_comp = chess.Move.from_uci(str(move_comp))
+        # s.board.push(move_comp)
       except Exception:
         traceback.print_exc()
     response = app.response_class(
@@ -165,8 +166,10 @@ def selfplay():
     move_comp = chess.Move.from_uci(str(move_comp))
     print("Minimax move: ", move_comp)
     s.board.push(move_comp)
-    response = app.response_class(
-      response=s.board.fen(),
-      status=200
-    )
-    return response
+  
+  print("GAME IS OVER")
+  response = app.response_class(
+    response="game over",
+    status=200
+  )
+  return response

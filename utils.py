@@ -48,3 +48,39 @@ def gen_compare_array(features):
 
 def to_svg(s):
   return base64.b64encode(chess.svg.board(board=s.board).encode('utf-8')).decode('utf-8')
+
+def convert(board):
+    chess_board =  [["--", "--", "--", "--", "--", "--", "--", "--"],
+                    ["--", "--", "--", "--", "--", "--", "--", "--"],
+                    ["--", "--", "--", "--", "--", "--", "--", "--"],
+                    ["--", "--", "--", "--", "--", "--", "--", "--"],
+                    ["--", "--", "--", "--", "--", "--", "--", "--"],
+                    ["--", "--", "--", "--", "--", "--", "--", "--"],
+                    ["--", "--", "--", "--", "--", "--", "--", "--"],
+                    ["--", "--", "--", "--", "--", "--", "--", "--"]]
+
+    for i in range(64):
+        row = int(i/8)
+        col = i % 8
+        if (board.piece_at(i) == None): chess_board[row][col] = "--"
+        else : 
+            if   (board.piece_at(i).symbol() == "R"): chess_board[row][col] = "wR"
+            elif (board.piece_at(i).symbol() == "N"): chess_board[row][col] = "wN"
+            elif (board.piece_at(i).symbol() == "B"): chess_board[row][col] = "wB"
+            elif (board.piece_at(i).symbol() == "Q"): chess_board[row][col] = "wQ"
+            elif (board.piece_at(i).symbol() == "K"): chess_board[row][col] = "wK"
+            elif (board.piece_at(i).symbol() == "P"): chess_board[row][col] = "wp"
+
+            elif (board.piece_at(i).symbol() == "r"): chess_board[row][col] = "bR"
+            elif (board.piece_at(i).symbol() == "n"): chess_board[row][col] = "bN"
+            elif (board.piece_at(i).symbol() == "b"): chess_board[row][col] = "bB"
+            elif (board.piece_at(i).symbol() == "q"): chess_board[row][col] = "bQ"
+            elif (board.piece_at(i).symbol() == "k"): chess_board[row][col] = "bK"
+            elif (board.piece_at(i).symbol() == "p"): chess_board[row][col] = "bp"
+
+    for i in range(int(len(chess_board)/2)):
+        temp = chess_board[i]
+        chess_board[i] = chess_board[len(chess_board)-1-i]
+        chess_board[len(chess_board)-1-i] = temp
+
+    return chess_board

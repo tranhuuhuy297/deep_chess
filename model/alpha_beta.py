@@ -4,18 +4,16 @@ import chess
 import random
 
 
-def minimaxRoot(depth, board,isMaximizing):
+def minimaxRoot(depth, board, isMaximizing):
     possibleMoves = board.legal_moves
     bestMove = -9999
     bestMoveFinal = None
     for x in possibleMoves:
         move = chess.Move.from_uci(str(x))
         board.push(move)
-        value = max(bestMove, minimax(depth - 1, board, -10000, 10000, not isMaximizing))
+        value = minimax(depth - 1, board, -10000, 10000, not isMaximizing)
         board.pop()
-        if( value > bestMove):
-            # print("Best score: " ,str(bestMove))
-            # print("Best move: ",str(bestMoveFinal))
+        if(value > bestMove):
             bestMove = value
             bestMoveFinal = move
     return bestMoveFinal
@@ -29,7 +27,7 @@ def minimax(depth, board, alpha, beta, is_maximizing):
         for x in possibleMoves:
             move = chess.Move.from_uci(str(x))
             board.push(move)
-            bestMove = max(bestMove,minimax(depth - 1, board,alpha,beta, not is_maximizing))
+            bestMove = max(bestMove, minimax(depth - 1, board, alpha, beta, not is_maximizing))
             board.pop()
             alpha = max(alpha,bestMove)
             if beta <= alpha:
@@ -40,7 +38,7 @@ def minimax(depth, board, alpha, beta, is_maximizing):
         for x in possibleMoves:
             move = chess.Move.from_uci(str(x))
             board.push(move)
-            bestMove = min(bestMove, minimax(depth - 1, board,alpha,beta, not is_maximizing))
+            bestMove = min(bestMove, minimax(depth - 1, board, alpha, beta, not is_maximizing))
             board.pop()
             beta = min(beta,bestMove)
             if(beta <= alpha):
