@@ -8,7 +8,7 @@ pip install -r requirements.txt
 ```
 ## Play Chess
 ```
-python play.py
+python play_v2.py
 ```
 ## Results
 ```
